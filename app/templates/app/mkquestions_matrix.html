@@ -1,0 +1,144 @@
+{% extends "app/teacher_dashboard.html" %}
+
+{% block content %}
+
+<h6>{{ message }}</h6>
+
+<button onclick="    window.location.href='../subjectchoice'">Chọn môn học</button>
+<span>Môn học đã chọn: {{ message2 }}</span>
+
+<div class="main-layout">
+    <!-- Phần trên: Bảng bên trái + Form bên phải -->
+    <div class="top-section">
+        <!-- Bên trái: Bảng dữ liệu -->
+        <div class="left-panel">
+            <h4>Ma trận chọn đề:</h4>
+            <table class="table table-bordered" id="data-table">
+                <thead>
+                    <tr>
+                        <th>TT</th>
+                        <th>Mã ma trận</th>
+                        <th>Tổng số câu</th>
+                        <th>Nội dung ma trận</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in mtrlst %}
+                    <tr class="select-row" data-id="{{ item.tt }}" dt-nd="{{ item.mamtr }}" dt-opt="{{ item.socaumtr }}" dt-da="{{ item.noidungmtr }}">
+                        <td>{{ item.tt }}</td>
+                        <td>{{ item.mamtr }}</td>
+                        <td>{{ item.socaumtr }}</td>
+                        <td>{{ item.noidungmtr }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Bên phải: Form nhập liệu chi tiết -->
+        <div class="right-panel">
+            <h4>Chi tiết thông tin</h4>
+            <form action="" method="POST" id="detail-form">
+                {% csrf_token %}
+                <label>Mã ma trận:</label>
+                <label id="item-mmtr">...</label>
+                <label>-------</label>
+                <label for="item-tmtr">Tên ma trận:</label>
+                <input style="width: 120px; padding: 1px;" type="text" id="item-tmtr" name="tenmtran" required>
+                <br>
+                <label>Phân phối số câu hỏi theo mức độ hiểu biết.</label>
+                <input type="hidden" id="item-id" name="item_id">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Mã đvkt</th>
+                            <th>Mức độ rất dễ</th>
+                            <th>Mức độ dễ</th>
+                            <th>Mức độ trung bình</th>
+                            <th>Mức độ khó</th>
+                            <th>Mức độ rất khó</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for pt in dvktlst %}
+                        <tr data-id="{{ pt.mdvkt }}" dt-nd="mcdord[]" dt-opt="mcdod[]" dt-da="mcdotb[]" dt-kh="mcdokh[]" dt-rk="mcdork[]">
+                            <td>{{ pt.mdvkt }}</td>
+                            <td><input style="width: 80px; padding: 1px; text-align: center;" type="text" id="mcdord[]" name="mcdord[]"></td>
+                            <td><input style="width: 80px; padding: 1px; text-align: center;" type="text" id="mcdod[]" name="mcdod[]"></td>
+                            <td><input style="width: 100px; padding: 1px; text-align: center;" type="text" id="mcdotb[]" name="mcdotb[]"></td>
+                            <td><input style="width: 80px; padding: 1px; text-align: center;" type="text" id="mcdokh[]" name="mcdokh[]"></td>
+                            <td><input style="width: 80px; padding: 1px; text-align: center;" type="text" id="mcdork[]" name="mcdork[]"></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+            </form>
+        </div>
+    </div>
+
+    <!-- Phần dưới: Hàng nút lệnh và các label khác -->
+    <div class="bottom-section">
+        <div class="action-buttons">
+            <button type="submit" form="detail-form" class="btn btn-primary" name="action" value="save">Lưu</button>
+            <button type="button" id="btn-new" class="btn btn-success" name="action" value="repair">Thêm mới</button>
+            <button type="button" id="btn-delete" class="btn btn-danger" name="action" value="delete">Xóa</button>
+        </div>
+        <div class="labels-info">
+            <span>Tổng số: <strong>{{ tsomtr }}</strong></span>
+            <span>Trạng thái: <strong id="status-label" class="text-success">Sẵn sàng</strong></span>
+        </div>
+        
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const rows = document.querySelectorAll('#data-table tbody tr');
+        const idInput = document.getElementById('item-id');
+        const ttInput = document.getElementById('id_httch');
+        const ndInput = document.getElementById('id_hndch');
+        const optInput1 = document.getElementById('id_hopt1');
+        const ansInput = document.getElementById('id_hans');
+        const statusLabel = document.getElementById('status-label');
+
+        rows.forEach(row => {
+            row.addEventListener('click', function () {
+                // Xóa highlight dòng cũ, thêm highlight dòng mới
+                rows.forEach(r => r.classList.remove('selected'));
+                this.classList.add('selected');
+
+                // Lấy dữ liệu từ thuộc tính data-* của thẻ tr
+                const tt = this.getAttribute('data-id');
+                const nd = this.getAttribute('dt-nd');
+                const opt = this.getAttribute('dt-opt');
+                const da = this.getAttribute('dt-da');
+
+                // Đưa dữ liệu vào form
+                idInput.value = tt;
+                ttInput.value = tt;
+                ndInput.value = nd;
+                optInput1.value = opt;
+                ansInput.value = da;
+                statusLabel.textContent = `Đang chọn bản ghi ID: ${tt}`;
+            });
+        });
+
+        // Nút Tạo mới: reset form
+        document.getElementById('btn-new').addEventListener('click', function () {
+            idInput.value = '';
+            ttInput.value = '';
+            ndInput.value = '';
+            optInput1.value = '';
+            ansInput.value = '';
+            statusLabel.textContent = 'Trạng thái: Tạo mới bản ghi';
+            rows.forEach(r => r.classList.remove('selected'));
+        });
+    });
+</script>
+
+{% endblock %}

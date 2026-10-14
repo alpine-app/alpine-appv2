@@ -1,0 +1,51 @@
+{% extends "app/teacher_dashboard.html" %}
+
+{% block content %}
+
+<h4>Danh sách các đề thi sử dụng hiện hành.</h4>
+
+<div class="row">
+    <div class="col-md-8">
+        <section id="svForm">
+            <form action="" method="post" class="form-horizontal">
+                {% csrf_token %}
+                <table border="1" cellpadding="10" cellspacing="0" style='text-align: center; vertical-align: middle;'>
+                    <thead>
+                        <tr>
+                            <th>TT</th>
+                            <th>Tên môn học</th>
+                            <th>Mã đề thi</th>
+                            <th>kỳ thi</th>
+                            <th>Lần thi</th>
+                            <th>Sử dụng đề thi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in tbldanhsach %}
+                        <tr>
+                            <td>{{ row.tt }}</td>
+                            <td>{{ row.ten }}</td>
+                            <td>{{ row.ma }}</td>
+                            <td>{{ row.kythi }}</td>
+                            <td>{{ row.lanthi }}</td>
+                            <td><input type="checkbox" name="selected_ids" value="{{ row.tt }}" checked></td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6">Không có dữ liệu trong cơ sở dữ liệu.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <br>
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <button type="submit" name="action" value="save" class="btn btn-default">Lưu</button>
+                    </div>
+                </div>
+            </form>
+        </section>
+    </div>
+</div>
+
+{% endblock %}

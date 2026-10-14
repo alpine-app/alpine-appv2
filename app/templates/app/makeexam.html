@@ -1,0 +1,56 @@
+{% extends "app/teacher_dashboard.html" %}
+
+{% block content %}
+
+<h4>Các kỳ thi hiện có:</h4>
+
+<table border="1" cellpadding="10" cellspacing="0" style='text-align: center; vertical-align: middle;'>
+    <tr>
+        <th>Mã kỳ thi</th>
+        <th>Tên kỳ thi</th>
+        <th>Năm học</th>
+        <th>Mô tả</th>
+    </tr>
+    {% for pr in prodkt %}
+    <tr>
+        <td>{{ pr.makt }}</td>
+        <td>{{ pr.tenkythi }}</td>
+        <td>{{ pr.fkmanh }}</td>
+        <td>{{ pr.motakt }}</td>
+    </tr>
+    {% endfor %}
+</table>
+<br>
+
+<div class="row">
+    <div class="col-md-8">
+        <section id="loginForm">
+            <form action="" method="post" class="form-horizontal">
+                {% csrf_token %}
+                <h4>Nhập kỳ thi.</h4>
+                <hr />
+                <div class="form-group">
+                    <table>
+                        {{ h_form.as_table }}
+                    </table>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <input type="hidden" name="next" value="/" />
+                        <button type="submit" name="action" value="save" class="btn btn-default">Lưu</button>
+                        <button type="submit" name="action" value="delete" class="btn btn-default">Xóa</button>
+                        <button type="submit" name="action" value="cancel" class="btn btn-default">Thoát</button>
+                    </div>
+                </div>
+                {% if form.errors %}
+                <p class="validation-summary-errors">Please enter a correct information.</p>
+                {% endif %}
+            </form>
+        </section>
+    </div>
+    <div class="col-md-4">
+        <section id="socialLoginForm"></section>
+    </div>
+</div>
+
+{% endblock %}

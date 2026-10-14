@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'app/content/bootstrap.min.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'app/content/site.css' %}" />
+    <script src="{% static 'app/scripts/modernizr-2.6.2.js' %}"></script>
+    <style>
+        /* CSS cơ bản cho trang và menu */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: sans-serif;
+            color: #222;
+            background-color: #f9f9f9;
+        }
+
+        nav {
+            background-color: #333;
+            padding: 15px 30px;
+        }
+
+        .menu {
+            list-style-type: none;
+            display: flex;
+            gap: 20px;
+        }
+
+            .menu li a {
+                color: #fff;
+                text-decoration: none;
+                font-size: 16px;
+                cursor: pointer;
+                padding: 8px 12px;
+                border-radius: 4px;
+                transition: background 0.3s;
+            }
+
+                .menu li a:hover {
+                    background-color: #555;
+                }
+
+        /* Nội dung mẫu trang */
+        .content {
+            padding: 40px;
+            text-align: center;
+        }
+
+        /* CSS cho Hộp hướng dẫn (Modal) */
+        .modal-overlay {
+            display: none; /* Mặc định ẩn đi */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); /* Nền mờ tối */
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            padding: 30px;
+            width: 400px;
+            max-width: 90%;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            position: relative;
+        }
+
+            .modal-content h2 {
+                margin-bottom: 15px;
+                color: #333;
+            }
+
+            .modal-content p {
+                line-height: 1.6;
+                margin-bottom: 20px;
+                color: #666;
+            }
+        /* Nút đóng hộp hướng dẫn */
+        .close-btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            float: right;
+        }
+
+            .close-btn:hover {
+                background-color: #0056b3;
+            }
+    </style>
+</head>
+
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="{% url 'student_subj' %}">Làm bài thi</a></li>
+                    <li><a href="#" id="openGuide">Hướng dẫn</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Khung Hộp hướng dẫn (Modal) -->
+    <div id="guideModal" class="modal-overlay">
+        <div class="modal-content">
+            <h2>Hộp Hướng Dẫn</h2>
+            <p>Đây là nội dung hướng dẫn sử dụng trang web. Bạn có thể thay đổi văn bản này thành bất kỳ thông tin nào bạn muốn hiển thị cho người dùng.</p>
+            <p>Đây là nội dung hướng dẫn được hiển thị trực tiếp ngay trên trang hiện tại mà không cần chuyển hướng.</p>
+            <ul>
+                <li>Bước 1: Chọn các mục trên menu.</li>
+                <li>Bước 2: Trải nghiệm tính năng.</li>
+            </ul>
+            <button id="closeGuide" class="close-btn">Đóng</button>
+        </div>
+    </div>
+
+    <!-- JavaScript để xử lý bật/tắt hộp hướng dẫn -->
+    <script>
+        const openBtn = document.getElementById('openGuide');
+        const closeBtn = document.getElementById('closeGuide');
+        const modal = document.getElementById('guideModal');
+
+        // Khi bấm vào "Hướng dẫn", hiện hộp thoại
+        openBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            modal.style.display = 'flex';
+        });
+
+        // Khi bấm nút "Đóng", ẩn hộp thoại
+        closeBtn.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+
+        // Khi bấm ra ngoài vùng nội dung hộp thoại cũng sẽ đóng lại
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+    </script>
+
+
+    <div class="container body-content">
+        {% block content %}{% endblock %}
+        <hr />
+        <footer>
+            <p>&copy; {{ year }} - AlpineTest</p>
+        </footer>
+    </div>
+
+    <script src="{% static 'app/scripts/jquery-1.10.2.js' %}"></script>
+    <script src="{% static 'app/scripts/bootstrap.js' %}"></script>
+    <script src="{% static 'app/scripts/respond.js' %}"></script>
+    {% block scripts %}{% endblock %}
+
+</body>
+</html>

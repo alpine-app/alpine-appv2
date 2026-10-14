@@ -1,0 +1,14 @@
+# Python / Django
+*.pyc
+*~
+*.py[cod]
+*$py.class
+
+# IDE
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

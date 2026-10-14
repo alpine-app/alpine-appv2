@@ -1,0 +1,29 @@
+{% extends "app/teacher_dashboard.html" %}
+
+{% block content %}
+
+<h2>Các ngành đã nhập:</h2>
+
+<table border="1" cellpadding="10" cellspacing="0" style='text-align: center; vertical-align: middle;'>
+    <tr>
+        <th>Mã ngành</th>
+        <th>Tên ngành</th>
+        <th>Trình độ</th>
+        <th>Khoa</th>
+    </tr>
+    {% for row in data %}
+    <tr>
+        {% for value in row.values %}
+        <td>{{ value }}</td>
+
+        {% endfor %}
+    </tr>
+    {% endfor %}
+</table>
+
+<br>
+<button onclick="window.location.href='../apmajor'">Thêm ngành</button>
+<button onclick="window.location.href='../apmajorrepair'">Sửa ngành</button>
+<button onclick="window.location.href='../apmajor'">Thoát</button>
+
+{% endblock %}

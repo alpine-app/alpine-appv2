@@ -1,0 +1,85 @@
+{% extends "app/teacher_dashboard.html" %}
+
+{% block content %}
+
+<h3>Môn học: {{ mon }}.</h3>
+<h6>Nếu chưa hiển thị tên môn học, bạn phải thiết lập các thông số kỳ thi, môn học trước khi vào phần này.</h6>
+
+<div class="row">
+    <div class="col-md-8">
+        <section id="svForm">
+            <h4>I. PHẦN LIỆT KÊ NGÂN HÀNG CÂU HỎI CỦA MÔN HỌC</h4>
+            <table border="1" cellpadding="10" cellspacing="0" style='text-align: center; vertical-align: middle;'>
+                <thead>
+                    <tr>
+                        <th>TT</th>
+                        <th>Mã Đvkt</th>
+                        <th>Mã tiêu đề</th>
+                        <th>Nội dung câu hỏi</th>
+                        <th>Đáp án</th>
+                        <th>File hình</th>
+                        <th>File âm thanh</th>
+                        <th>File video</th>
+                        <th>Hoán vị</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ro in dscauhoi %}
+                    <tr>
+                        <td>{{ ro.tt }}</td>
+                        <td>{{ ro.dvkt }}</td>
+                        <td>{{ ro.tieude }}</td>
+                        <td>{{ ro.cauhoi|safe }}</td>
+                        <td>{{ ro.dapan }}</td>
+                        <td>{{ ro.picch }}</td>
+                        <td>{{ ro.audch }}</td>
+                        <td>{{ ro.clipch }}</td>
+                        <td><input type="checkbox" name="selected_ids" value="{{ ro.tt }}" {{ ro.permch|yesno:"checked," }}></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+        <br>
+        <section id="svForm1">
+            {% if msg %}
+            <p style="color: red;">{{ msg }}</p>
+            {% endif %}
+            <form action="" method="post" class="form-horizontal" enctype="multipart/form-data">
+                {% csrf_token %}
+                <hr />
+                <h4>II. PHẦN CẬP NHẬT FILE HÌNH ẢNH, ÂM THANH, VIDEO CHO TỪNG CÂU HỎI CỦA MÔN HỌC</h4>
+                <div class="form-group">
+                    <table>
+                        {{ g_form.as_table }}
+                    </table>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <button type="submit" name="action" value="save1" class="btn btn-default">Cập nhật</button>
+                    </div>
+                </div>
+            </form>
+        </section>
+        <section id="svForm2">
+            <form action="" method="post" class="form-horizontal">
+                {% csrf_token %}
+                <hr />
+                <h4>III. PHẦN CHỈNH, SỬA NỘI DUNG, ĐÁP ÁN CHO TỪNG CÂU HỎI CỦA MÔN HỌC</h4>
+                <div class="form-group">
+                    <table>
+                        {{ h_form.as_table }}
+                    </table>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <button type="submit" name="action" value="save2" class="btn btn-default">Cập nhật</button>
+                    </div>
+                </div>
+            </form>
+        </section>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends "app/teacher_dashboard.html" %}
+
+{% block content %}
+
+<h4>Năm học: {{ nh }}.</h4>
+
+<div class="row">
+    <div class="col-md-8">
+        <section id="svForm">
+            <h4>I. PHẦN LIỆT KÊ CÁC LỚP HỌC PHẦN TRONG NĂM HỌC</h4>
+            <table border="1" cellpadding="10" cellspacing="0" style='text-align: center; vertical-align: middle;'>
+                <tr>
+                    <th>Mã lớp hp</th>
+                    <th>Tên lớp hp</th>
+                    <th>Mã môn học</th>
+                    <th>Ngày thi</th>
+                </tr>
+                {% for ro in datal %}
+                <tr>
+                    {% for value in ro.values %}
+                    <td>{{ value }}</td>
+
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </table>
+        </section>
+        <br>
+        <section id="svForm1">
+            <form action="" method="post" class="form-horizontal">
+                {% csrf_token %}
+                <hr />
+                <h4>II. CHỌN LỚP HỌC PHẦN ĐỂ XUẤT KẾT QUẢ THI</h4>
+                <div class="form-group">
+                    {{ u_form.as_p }}
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <button type="submit" name="action" value="save1" class="btn btn-default">Xuất kết quả thi</button>
+                        <button type="submit" name="action" value="print1" class="btn btn-default">In bảng kết quả thi</button>
+                    </div>
+                </div>
+            </form>
+        </section>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,180 @@
+{% extends "app/teacher_dashboard.html" %}
+
+{% block content %}
+
+<h6>{{ message }}</h6>
+
+<button onclick="    window.location.href='../subjectchoice'">Chọn môn học</button>
+<span>Môn học đã chọn: {{ message2 }}</span>
+
+<div class="main-layout">
+    <!-- Phần trên: Bảng bên trái + Form bên phải -->
+    <div class="top-section">
+        <!-- Bên trái: Bảng dữ liệu -->
+        <div class="left-panel">
+            <h4>Ngân hàng câu hỏi:</h4>
+            <table class="table table-bordered" id="data-table">
+                <thead>
+                    <tr>
+                        <th>TT</th>
+                        <th>Nội dung</th>
+                        <th>Các lựa chọn</th>
+                        <th>Đáp án</th>
+                        <th>Mã đvkt</th>
+                        <th>Mã tiêu đề</th>
+                        <th>Ngày tạo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in nghgch %}
+                    <tr class="select-row" data-id="{{ item.tt }}" dt-nd="{{ item.nd }}" dt-opt="{{ item.opt }}" dt-da="{{ item.da }}" dt-dvkt="{{ item.dvkt }}" dt-td="{{ item.td }}">
+                        <td>{{ item.tt }}</td>
+                        <td>{{ item.nd|safe }}</td>
+                        <td>{{ item.opt|safe }}</td>
+                        <td>{{ item.da }}</td>
+                        <td>{{ item.dvkt }}</td>
+                        <td>{{ item.td }}</td>
+                        <td>{{ item.mdo }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Bên phải: Form nhập liệu chi tiết -->
+        <div class="right-panel">
+            <h4>Chi tiết thông tin</h4>
+            <form action="" method="POST" id="detail-form" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="hidden" id="item-id" name="item_id">
+
+                <!-- Render Django Form -->
+                {{ c_form.as_p }}
+
+                <hr />
+                {{ d_form }}
+                <label for="tieude_select">Tiêu đề:</label>
+                <select style="padding: 5px;font-size: 16px;border-radius: 3px;border: 1px solid #ccc;background-color: #f9f9f9;cursor: pointer;" name="tieude_field" id="tieude_select">
+                    <option value="">-- Chọn tiêu đề hiển thị của câu hỏi --</option>
+                    {% for value, label in tieudes %}
+                    <option value="{{ value }}">{{ label }}</option>
+                    {% endfor %}
+                </select>
+                <br>
+                <label for="menu-loaicau">Chọn loại câu hỏi:</label>
+                <select style="padding: 5px;font-size: 16px;border-radius: 3px;border: 1px solid #ccc;background-color: #f9f9f9;cursor: pointer;" id="menu-loaicau" name="chonloaicau">
+                    <option value="">-- Chọn loại câu hỏi --</option>
+                    <option value="LC">Câu hỏi lựa chọn A, B, C, D</option>
+                    <option value="GD">Câu hỏi ghép đôi</option>
+                    <option value="NH">Câu hỏi nhóm chung</option>
+                    <option value="DT">Câu hỏi điền từ</option>
+                    <option value="DS">Câu hỏi đúng sai</option>
+                    <option value="TL">Câu hỏi tự luận</option>
+                </select>
+                <label for="menu-dokho">Mức độ hiểu biết:</label>
+                <select style="padding: 5px;font-size: 16px;border-radius: 3px;border: 1px solid #ccc;background-color: #f9f9f9;cursor: pointer;" id="menu-dokho" name="mucdo">
+                    <option value="">-- Chọn mức độ hiểu biết --</option>
+                    <option value="1">Rất dễ</option>
+                    <option value="2">Dễ</option>
+                    <option value="3">Trung bình</option>
+                    <option value="4">Khó</option>
+                    <option value="5">Rất khó</option>
+                </select>
+            </form>
+            <hr/>
+            <div class="action-buttons">
+                <button type="submit" form="detail-form" class="btn btn-primary" name="action" value="save">Lưu</button>
+                <button type="button" id="btn-new" class="btn btn-success" name="action" value="repair">Thêm mới</button>
+                <button type="button" id="btn-delete" class="btn btn-danger" name="action" value="delete">Xóa</button>
+            </div>
+            <div class="labels-info">
+                <span>Tổng số: <strong>{{ tongsoch }}</strong></span>
+                <span>Trạng thái: <strong id="status-label" class="text-success">Sẵn sàng</strong></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Phần dưới: Hàng nút lệnh và các label khác -->
+    <div class="bottom-section">
+        <form id="chForm" action="" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div style="padding: 5px;font-size: 16px;border-radius: 3px;border: 1px solid #ccc;background-color: #f9f9f9;">
+                {{ b_form }}
+            </div>
+            {{ e_form }}
+            <label for="menu-dokho2">Mức độ hiểu biết:</label>
+            <select style="padding: 5px;font-size: 16px;border-radius: 3px;border: 1px solid #ccc;background-color: #f9f9f9;cursor: pointer;" id="menu-dokho2" name="mucdo2">
+                <option value="">-- Chọn mức độ hiểu biết --</option>
+                <option value="RD">Rất dễ</option>
+                <option value="DE">Dễ</option>
+                <option value="TB">Trung bình</option>
+                <option value="KH">Khó</option>
+                <option value="RK">Rất khó</option>
+            </select>
+            <label for="tieude_select2">Tiêu đề:</label>
+            <select style="padding: 5px;font-size: 16px;border-radius: 3px;border: 1px solid #ccc;background-color: #f9f9f9;cursor: pointer;" name="tieude_field2" id="tieude_select2">
+                <option value="">-- Chọn tiêu đề hiển thị của câu hỏi --</option>
+                {% for value2, label2 in tieudes %}
+                <option value="{{ value2 }}">{{ label2 }}</option>
+                {% endfor %}
+            </select>
+        </form>
+
+        <div class="labels-info">
+            <button type="submit" form="chForm" class="btn btn-primary" name="action" value="save2">Chấp nhận</button>
+            <button class="btn btn-success" onclick="window.location.href='../mkquestions_matrix'">Ma trận chọn đề</button>
+            <span>Trạng thái: <strong id="status-label2" class="text-success">Sẵn sàng</strong></span>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const rows = document.querySelectorAll('#data-table tbody tr');
+        const idInput = document.getElementById('item-id');
+        const ttInput = document.getElementById('id_httch');
+        const ndInput = document.getElementById('id_hndch');
+        const optInput1 = document.getElementById('id_hopt1');
+        const ansInput = document.getElementById('id_hans');
+        const statusLabel = document.getElementById('status-label');
+
+        rows.forEach(row => {
+            row.addEventListener('click', function () {
+                // Xóa highlight dòng cũ, thêm highlight dòng mới
+                rows.forEach(r => r.classList.remove('selected'));
+                this.classList.add('selected');
+
+                // Lấy dữ liệu từ thuộc tính data-* của thẻ tr
+                const tt = this.getAttribute('data-id');
+                const nd = this.getAttribute('dt-nd');
+                const opt = this.getAttribute('dt-opt');
+                const da = this.getAttribute('dt-da');
+
+                // Đưa dữ liệu vào form
+                idInput.value = tt;
+                ttInput.value = tt;
+                ndInput.value = nd;
+                optInput1.value = opt;
+                ansInput.value = da;
+                statusLabel.textContent = `Đang chọn bản ghi ID: ${tt}`;
+            });
+        });
+
+        // Nút Tạo mới: reset form
+        document.getElementById('btn-new').addEventListener('click', function () {
+            idInput.value = '';
+            ttInput.value = '';
+            ndInput.value = '';
+            optInput1.value = '';
+            ansInput.value = '';
+            statusLabel.textContent = 'Trạng thái: Tạo mới bản ghi';
+            rows.forEach(r => r.classList.remove('selected'));
+        });
+    });
+</script>
+
+{% endblock %}

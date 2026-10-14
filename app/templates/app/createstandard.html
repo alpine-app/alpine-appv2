@@ -1,0 +1,30 @@
+{% extends "app/teacher_dashboard.html" %}
+
+{% block content %}
+
+<h4>Chọn ma trận đề:</h4>
+<button onclick="window.location.href='../getmtrde'">Chọn ma trận đề</button>
+<p>
+    <span>Ma trận đã chọn: </span>
+    <span>{{ x }}</span>
+</p>
+<p>
+    <span>Hiện thử các nội dung ma trận y: </span>
+    <span>{{ y }}</span>
+    <span>Hiện thử các nội dung ma trận z: </span>
+    <span>{{ z }}</span>
+</p>
+<form action="" method="post" class="form-horizontal">
+    {% csrf_token %}
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="hidden" name="next" value="/" />
+            <button type="submit" name="action" value="save" class="btn btn-default">Tạo đề chuẩn</button>
+        </div>
+    </div>
+    {% if form.errors %}
+    <p class="validation-summary-errors">Please enter a correct user name and password.</p>
+    {% endif %}
+</form>
+
+{% endblock %}

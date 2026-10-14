@@ -1,0 +1,128 @@
+<!-- templates/print_page.html -->
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Exam results</title>
+    <style>
+        @media print {
+            /* Ẩn các phần không muốn in như menu, nút bấm */
+            .no-print, header, footer, nav {
+                display: none !important;
+            }
+
+            /* Tùy chỉnh vùng in hiển thị đẹp hơn trên giấy */
+            body {
+                font-size: 12pt;
+                color: #000;
+                background: #fff;
+            }
+        }
+        /* CSS thông thường cho màn hình web */
+        .no-print {
+            margin: 20px 0;
+        }
+
+        .my-largefont {
+            text-align: center;
+            color: blue;
+            font-size: 1.2em;
+            padding: 10px 15px;
+        }
+
+        .my-button {
+            background-color: blue;
+            color: white;
+            border-radius: 5px;
+            font-size: 1.1em;
+            padding: 8px 15px;
+        }
+
+        .center-col {
+            text-align: center; /* Canh giữa nội dung */
+            vertical-align: middle; /* Canh giữa theo chiều dọc nếu cần */
+        }
+
+        .center-colhoten {
+            width: 20%;
+            text-align: center; /* Canh giữa nội dung */
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+
+        table.noborder, table.noborder td, table.noborder th {
+            border: none; /* Hoặc border: 0; */
+            border-collapse: collapse; /* Gộp đường viền nếu có */
+            text-align: center;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="no-print">
+        <button onclick="window.print()">In trang này</button>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <table class="noborder">
+                <tr>
+                    <td>BỘ VĂN HÓA, THỂ THAO VÀ DU LỊCH</td>
+                    <th>CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</th>
+                </tr>
+                <tr>
+                    <th>TRƯỜNG CAO ĐẲNG DU LỊCH NHA TRANG</th>
+                    <th>Độc lập - Tự do - Hạnh phúc</th>
+                </tr>
+            </table>
+            <div style="text-align: center;">
+                <h3>BẢNG KẾT QUẢ THI KẾT THÚC MÔN HỌC, MÔ-ĐUN</h3>
+            </div>
+            <table class="noborder">
+                <tr><td>Học kỳ: {{ kythi }} </td><td>Năm học: {{ namhoc }} </td></tr>
+                <tr><td>Môn học, mô-đun: {{ tenmon }} </td><td>Kỳ thi: {{ kythi }} </td></tr>
+                <tr><td>Ngày thi: {{ ngthi }} </td></tr>
+            </table>
+            <hr style="border: none; height: 1px; background-color: red; width: 30%;">
+            <table border="1" cellpadding="10" cellspacing="0" style='text-align: center; vertical-align: middle;'>
+                <tr>
+                    <th>TT</th>
+                    <th>Mã sinh viên</th>
+                    <th>Mã đề thi</th>
+                    <th>Điểm số</th>
+                    <th>Điểm chữ</th>
+                </tr>
+                {% for ro in data %}
+                <tr>
+                    {% for value in ro.values %}
+                    <td>{{ value }}</td>
+
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </table>
+            <br>
+	        <table class="noborder">
+                <tr>
+                    <td></td>
+                    <td><i>Khánh Hòa, ngày .. tháng ...năm ....</i></td>
+                </tr>
+                <tr>
+                    <th>GIẢNG VIÊN GIẢNG DẠY</th>
+                    <th>CÁN BỘ QUẢN LÝ CHUYÊN MÔN</th>
+                </tr>
+            </table>
+	        <br>
+        </div>
+    </div>
+</body>
+</html>

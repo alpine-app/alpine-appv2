@@ -1,0 +1,65 @@
+{% extends "app/teacher_dashboard.html" %}
+
+{% block content %}
+
+<h4>{{ ten }}</h4>
+
+<table border="1" cellpadding="10" cellspacing="0" style='text-align: center; vertical-align: middle;'>
+    <tr>
+        <th>Mã năm học</th>
+        <th>Năm bắt đầu</th>
+        <th>Năm kết thúc</th>
+    </tr>
+    {% for ro in data %}
+    <tr>
+        {% for value in ro.values %}
+        <td>{{ value }}</td>
+
+        {% endfor %}
+    </tr>
+    {% endfor %}
+</table>
+<br>
+
+<div class="row">
+    <div class="col-md-8">
+        <section id="nhForm">
+            <form action="" method="post" class="form-horizontal">
+                {% csrf_token %}
+                <h4>Tạo năm học.</h4>
+                <hr />
+                <div class="form-group">
+                    <table>
+                        {{ u_form.as_table }}
+                    </table>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <input type="hidden" name="next" value="/" />
+                        <button type="submit" name="action" value="save1" class="btn btn-default">Lưu</button>
+                        <button type="submit" name="action" value="repair1" class="btn btn-default">Sửa</button>
+                        <button type="submit" name="action" value="delete1" class="btn btn-default">Xóa</button>
+                    </div>
+                </div>
+            </form>
+        </section>
+        <section id="nhForm2">
+            <form action="" method="post" class="form-horizontal">
+                {% csrf_token %}
+                <h4>Năm học hiện hành:</h4>
+                <hr />
+                <div class="form-group">
+                    {{ u_form2.as_p }}
+                </div>
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <input type="hidden" name="next" value="/" />
+                        <button type="submit" name="action" value="save2" class="btn btn-default">Xác nhận</button>
+                    </div>
+                </div>
+            </form>
+        </section>
+    </div>
+</div>
+
+{% endblock %}

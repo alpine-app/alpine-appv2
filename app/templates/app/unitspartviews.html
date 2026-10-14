@@ -1,0 +1,60 @@
+{% extends "app/teacher_dashboard.html" %}
+
+{% block content %}
+
+<h2>Các môn đã nhập:</h2>
+
+<table border="1" cellpadding="10" cellspacing="0" style='text-align: center; vertical-align: middle;'>
+    <tr>
+        <th>Mã môn</th>
+        <th>Tên môn học</th>
+        <th>Mã ngành</th>
+        <th>Trình độ</th>
+        <th>Thời gian</th>
+        <th>Mã đvkt</th>
+        <th>Tên đvkt</th>
+        <th>Mã đvkt</th>
+        <th>Tên đvkt</th>
+        <th>Mã đvkt</th>
+        <th>Tên đvkt</th>
+        <th>Mã đvkt</th>
+        <th>Tên đvkt</th>
+        <th>Mã đvkt</th>
+        <th>Tên đvkt</th>
+        <th>Mã đvkt</th>
+        <th>Tên đvkt</th>
+        <th>Mã đvkt</th>
+        <th>Tên đvkt</th>
+        <th>Mã đvkt</th>
+        <th>Tên đvkt</th>
+        <th>Mã đvkt</th>
+        <th>Tên đvkt</th>
+        <th>Mã đvkt</th>
+        <th>Tên đvkt</th>
+        <th>Mã tđ</th>
+        <th>Tên tiêu đề</th>
+        <th>Mã tđ</th>
+        <th>Tên tiêu đề</th>
+        <th>Mã tđ</th>
+        <th>Tên tiêu đề</th>
+        <th>Mã tđ</th>
+        <th>Tên tiêu đề</th>
+        <th>Mã tđ</th>
+        <th>Tên tiêu đề</th>
+    </tr>
+    {% for row in data %}
+    <tr>
+        {% for value in row.values %}
+        <td>{{ value }}</td>
+
+        {% endfor %}
+    </tr>
+    {% endfor %}
+</table>
+
+<br>
+<button onclick="window.location.href='../unitspart'">Thêm môn học</button>
+<button onclick="window.location.href='../unitspartrepair'">Sửa môn học</button>
+<button onclick="window.location.href='../unitspart'">Thoát</button>
+
+{% endblock %}

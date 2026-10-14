@@ -1,0 +1,48 @@
+{% extends "app/student_dashboard.html" %}
+
+{% block content %}
+
+<h4>Chọn môn thi thực hiện.</h4>
+
+<div class="row">
+    <div class="col-md-8">
+        <section id="svForm">
+            <form action="" method="post" class="form-horizontal">
+                {% csrf_token %}
+                <select id="myCombobox" name="myCombo" onchange="hienBangGiaTri()">
+                    <option value="">-- Vui lòng chọn --</option>
+                    {% for cat in categories %}
+                    <option value="{{ cat.tt }}">{{ cat.name }}</option>
+                    {% endfor %}
+                </select>
+                <br>
+                <div class="form-group">
+                    Học phần đã chọn để làm bài thi: <span id="output">Chưa chọn</span>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <button type="submit" name="action" value="save1" class="btn btn-default">Làm bài thi</button>
+                    </div>
+                </div>
+            </form>
+        </section>
+    </div>
+
+</div>
+
+{% endblock %}
+{% block scripts %}
+<script>
+    // Dữ liệu mẫu cho các bảng
+    function hienBangGiaTri() {
+        var chon = document.getElementById("myCombobox").value;
+        var output = document.getElementById("output");
+        // Kiểm tra nếu người dùng chưa chọn gì
+        if (chon === "") {
+            output.innerText = "Chưa chọn gì";
+        } else {
+            output.innerText = chon;
+        }
+    }
+</script>
+{% endblock %}

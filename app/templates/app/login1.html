@@ -1,0 +1,102 @@
+{% extends "app/layout.html" %}
+
+{% block content %}
+
+<h3>{{ title }}</h3>
+<div class="row">
+    <div class="col-md-8">
+        <section id="loginSection">
+            <form action="" method="post" class="form-horizontal">
+                {% csrf_token %}
+                <h4>Dùng một account để đăng nhập.</h4>
+                <hr />
+                <div class="form-group">
+                    <label for="id_username1" class="col-md-2 control-label">Tên người dùng</label>
+                    <div class="col-md-10">
+                        <input type="text" id="username" name="hname" placeholder="Nhập tên người dùng...">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="id_password1" class="col-md-2 control-label">Mật khẩu</label>
+                    <div class="col-md-10">
+                        <input type="text" id="password" name="hps" placeholder="Nhập password...">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <input type="hidden" name="next" value="/" />
+                        <button type="submit" name="action" value="btnSubmit" onclick="handleLogin()">Đăng nhập</button>
+                    </div>
+                </div>
+            </form>
+        </section>
+        <section id="logoutSection" class="hidden">
+            <h4>Xin chào, <span id="user-display"></span>! Bạn chưa có tên đăng nhập hoặc mật khẩu không đúng</h4>
+            <hr />
+            <div class="form-group">
+                <button onclick="handleLogout()" style="background-color: #dc3545;">Tiếp tục</button>
+            </div>
+        </section>
+    </div>
+    <div class="col-md-4">
+        <section id="socialLoginForm"></section>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+
+<script>
+    // Lấy các phần tử DOM
+    const loginSection = document.getElementById('loginSection');
+    const logoutSection = document.getElementById('logoutSection');
+    const userDisplay = document.getElementById('user-display');
+    const usernameInput = document.getElementById('username');
+    const userpsInput = document.getElementById('password');
+
+    // Kiểm tra trạng thái khi tải trang
+    function checkAuth() {
+        const savedUser = localStorage.getItem('currentUser');
+
+        if (!savedUser) {
+            // Chưa có -> Hiển thị form login, ẩn logout
+            loginSection.classList.remove('hidden');
+            logoutSection.classList.add('hidden');
+        } else {
+            // Có rồi -> Hiển thị tên người dùng và nút logout, ẩn login
+            userDisplay.textContent = savedUser;
+            loginSection.classList.add('hidden');
+            logoutSection.classList.remove('hidden');
+        }
+    }
+
+    // Xử lý sự kiện Đăng nhập
+    function handleLogin() {
+        const username = usernameInput.value.trim();
+        const userps = userpsInput.value.trim();
+        if (username === '' || userps === '') {
+            alert('Vui lòng nhập tên đăng nhập, mật khẩu!');
+            return;
+        }
+        // Lưu vào localStorage
+        localStorage.setItem('currentUser', username);
+        //usernameInput.value = '';
+        //userpsInput.value = '';
+        checkAuth();
+        // Trả về true để form tiếp tục submit
+        return true; 
+    }
+
+    // Xử lý sự kiện Đăng xuất
+    function handleLogout() {
+        // Xóa khỏi localStorage
+        localStorage.removeItem('currentUser');
+        checkAuth();
+    }
+
+    // Chạy kiểm tra ngay khi load trang
+    checkAuth();
+</script>
+
+{% endblock %}

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Phòng Thi Trắc Nghiệm</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f9f9f9;
+        }
+
+        .timer-box {
+            position: fixed;
+            top: 10px;
+            right: 20px;
+            background: #ff4757;
+            color: white;
+            padding: 10px 20px;
+            font-size: 20px;
+            font-weight: bold;
+            border-radius: 5px;
+            z-index: 999;
+        }
+
+        .question-card {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .question-img {
+            max-width: 300px;
+            display: block;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+
+        button {
+            background: #2ed573;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Đồng hồ đếm ngược -->
+    <div class="timer-box" id="timer">--:--</div>
+
+    <h2>Bài Thi Trắc Nghiệm Trực Tuyến</h2>
+    {% if not is_submitted %}
+        <form id="examForm" method="POST">
+            {% csrf_token %}
+
+            {% for q in questions %}
+            <div class="question-card">
+                <p><strong>Câu {{ forloop.counter }}:</strong> {{ q.question }}</p>
+                <!-- Hiển thị hình ảnh nếu có -->
+                {% for key, value in q.options.items %}
+                <label>
+                    <input type="radio" name="question_{{ q.id }}" value="{{ key }}" required>
+                    {{ key }}. {{ value }}
+                </label><br>
+                {% endfor %}
+            </div>
+            {% endfor %}
+            <button type="submit">Nộp bài ngay</button>
+        </form>
+    {% endif %}
+    <script>
+        // 1. Xử lý đếm ngược thời gian và tự động nộp
+        let timeLeft = {{ exam_duration }}; // Lấy số giây từ Django truyền qua
+        const timerElement = document.getElementById('timer');
+        const examForm = document.getElementById('examForm');
+
+        const countdown = setInterval(() => {
+            let minutes = Math.floor(timeLeft / 60);
+            let seconds = timeLeft % 60;
+
+            timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+            if (timeLeft <= 0) {
+                clearInterval(countdown);
+                alert("Hết giờ làm bài! Hệ thống sẽ tự động nộp bài.");
+                localStorage.clear(); // Xóa dữ liệu tạm khi nộp bài
+                examForm.submit();
+            }
+            timeLeft--;
+        }, 1000);
+
+        // 2. Lưu tạm và khôi phục đáp án bằng localStorage
+        const formInputs = examForm.querySelectorAll('input[type="radio"]');
+
+        // Khôi phục dữ liệu cũ nếu lỡ F5 hoặc tải lại trang
+        formInputs.forEach(input => {
+            const savedValue = localStorage.getItem(input.name);
+            if (savedValue && savedValue === input.value) {
+                input.checked = true;
+            }
+
+            // Lắng nghe sự kiện thay đổi để lưu tạm ngay lập tức
+            input.addEventListener('change', () => {
+                localStorage.setItem(input.name, input.value);
+            });
+        });
+
+        // Xóa localStorage khi người dùng bấm nút nộp bài thủ công
+        examForm.addEventListener('submit', () => {
+            localStorage.clear();
+        });
+    </script>
+</body>
+</html>

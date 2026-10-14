@@ -1,0 +1,55 @@
+{% extends "app/teacher_dashboard.html" %}
+
+{% block content %}
+
+<h2>{{ title }}.</h2>
+<h6>Nhập lịch thi cho các học phần.</h6>
+
+<div class="row">
+    <div class="col-md-8">
+        <section id="svForm">
+            <form action="" method="post" class="form-horizontal">
+                {% csrf_token %}
+                <table border="1" cellpadding="10" cellspacing="0" style='text-align: center; vertical-align: middle;'>
+                    <thead>
+                        <tr>
+                            <th>TT</th>
+                            <th>Mã lớp học phần</th>
+                            <th>Tên lớp học phần</th>
+                            <th>Môn học</th>
+                            <th>Thời gian làm bài</th>
+                            <th>Ngày, giờ thi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ro in dslop %}
+                        <tr>
+                            <td>{{ ro.tt }}</td>
+                            <td>{{ ro.malophp }}</td>
+                            <td>{{ ro.tenlophp }}</td>
+                            <td>{{ ro.fkmamon }}</td>
+                            <td>
+                                <!-- Thẻ input kiểu time cho từng hàng -->
+                                <input type="text" name="tglbai_{{ ro.tt }}" value="{{ ro.thoigianthi }}">
+                            </td>
+                            <td>
+                                <!-- Thẻ input kiểu time cho từng hàng -->
+                                <input type="datetime-local" name="date_{{ ro.tt }}" value="{{ ro.ngaythi|date:'Y-m-d\TH:i' }}">
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <br>
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <button type="submit" name="action" value="save1" class="btn btn-default">Lưu</button>
+                    </div>
+                </div>
+            </form>
+        </section>
+    </div>
+
+</div>
+
+{% endblock %}

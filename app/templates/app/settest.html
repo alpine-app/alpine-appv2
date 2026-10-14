@@ -1,0 +1,63 @@
+{% extends "app/teacher_dashboard.html" %}
+
+{% block content %}
+
+<div class="wrapper">
+    <!-- Sidebar bên trái -->
+    <nav id="sidebar" class="sidebar">
+        <div class="sidebar-header">
+            <h3>Thiết lập kỳ thi</h3>
+        </div>
+        <ul class="sidebar-menu">
+            <li><a href="{% url 'makeexam' %}">Tạo kỳ thi</a></li>
+            <li><a href="{% url 'createstandard' %}">Tạo đề chuẩn</a></li>
+            <li><a href="{% url 'gethoanvi' %}">Các đề thi sử dụng</a></li>
+        </ul>
+
+        <!-- Nút lệnh thu gọn / mở rộng -->
+        <button id="toggle-btn" class="toggle-btn">&gt;</button>
+    </nav>
+
+    <!-- Nội dung chính bên phải -->
+    <main class="main-content">
+        <h1>Thông tin về kỳ thi</h1>
+        <p>Các thông tin sau đây có hiệu lực trong quá trình làm việc với kỳ thi.</p>
+        <form action="" method="post" class="form-horizontal">
+            {% csrf_token %}
+            <hr />
+            <div class="form-group">
+                {{ a_form }}
+                {{ b_form }}
+            </div>
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="hidden" name="next" value="/" />
+                    <button type="submit" name="action" value="chon" class="btn btn-default">Chọn</button>
+                </div>
+            </div>
+            {% if form.errors %}
+            <p class="validation-summary-errors">Please enter a correct kỳ thi và môn thi.</p>
+            {% endif %}
+        </form>
+    </main>
+</div>
+
+<!-- JavaScript xử lý ẩn/hiện -->
+<script>
+    const sidebar = document.getElementById('sidebar');
+    const toggleBtn = document.getElementById('toggle-btn');
+
+    toggleBtn.addEventListener('click', () => {
+        // Thêm hoặc xóa class 'collapsed' của sidebar
+        sidebar.classList.toggle('collapsed');
+
+        // Đổi chiều dấu mũi tên từ > thành < và ngược lại
+        if (sidebar.classList.contains('collapsed')) {
+            toggleBtn.innerHTML = '&gt;'; // Dấu > khi thu gọn
+        } else {
+            toggleBtn.innerHTML = '&lt;'; // Dấu < khi mở rộng
+        }
+    });
+</script>
+
+{% endblock %}

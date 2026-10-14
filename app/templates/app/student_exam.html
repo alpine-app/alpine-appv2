@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Phòng thi trắc nghiệm</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f9f9f9;
+        }
+
+        .timer-box {
+            position: fixed;
+            top: 10px;
+            right: 20px;
+            background: #ff4757;
+            color: white;
+            padding: 10px 20px;
+            font-size: 20px;
+            font-weight: bold;
+            border-radius: 5px;
+            z-index: 999;
+        }
+
+        .question-card {
+            background: white;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        button {
+            background: #2ed573;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        p:empty {
+            display: none;
+        }
+
+        /* Khung chứa chính dùng Flexbox */
+        .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 15px;
+            border: 1px solid #ddd;
+        }
+
+        /* Phần văn bản nằm bên trái, tự giãn nở */
+        .text-box {
+            flex: 1;
+        }
+
+        /* Phần hình ảnh nằm bên phải */
+        .image-box img {
+            max-width: 800px;
+            height: auto;
+            display: block;
+        }
+
+        /* Class ẩn phần tử khi không có ảnh */
+        .hidden {
+            display: none !important;
+        }
+
+        .audio-container audio {
+            margin: 20px 0;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Đồng hồ đếm ngược -->
+    <div class="timer-box" id="timer">--:--</div>
+
+    <h2>Bài thi môn: {{ tenmon }}</h2>
+    <h3>Họ tên sinh viên: {{ hoten }}</h3>
+    {% if not is_submitted %}
+    <form id="examForm" method="POST">
+        {% csrf_token %}
+        {% for q in questions %}
+        <div class="question-card">
+            {{ q.assquestion|safe }}
+            <!-- Hiển thị âm thanh nếu có -->
+            <!-- Trường hợp có file âm thanh -->
+            <div class="audio-container">
+                <audio class="check-audio" controls>
+                    <source src="/media/audios/{{ q.aud }}" type="audio/mpeg">
+                    Trình duyệt của bạn không hỗ trợ thẻ audio.
+                </audio>
+            </div>
+
+            <!-- Trường hợp không có file âm thanh (src để trống hoặc không có thẻ source) -->
+            <div class="audio-container">
+                <audio class="check-audio" controls>
+                    <source src="" type="audio/mpeg">
+                </audio>
+            </div>
+
+            <div class="image-box" id="imageBox">
+                <img src="/media/images/{{ q.pic }}" alt="{{ q.pic }}" id="myImage" width="750">
+            </div>
+            <p><strong>Câu {{ forloop.counter }}:</strong> {{ q.question|safe }}</p>
+            <!-- Hiển thị hình ảnh nếu có -->
+            {% for key, value in q.options.items %}
+            <label>
+                <input type="radio" name="question_{{ q.tt }}" value="{{ key }}" required>
+                {{ key }}. {{ value }}
+            </label><br>
+            {% endfor %}
+        </div>
+        {% endfor %}
+        <button type="submit">Nộp bài ngay</button>
+    </form>
+    {% endif %}
+    <script>
+        const img = document.getElementById('myImage');
+        const imageBox = document.getElementById('imageBox');
+        // Kiểm tra ngay từ đầu nếu thuộc tính src trống hoặc không tồn tại
+        if (!img.getAttribute('src') || img.getAttribute('src').trim() === "") {
+            imageBox.classList.add('hidden');
+        }
+        // Sự kiện tự động ẩn nếu file hình tải thất bại (không tìm thấy file)
+        img.onerror = function () {
+            imageBox.classList.add('hidden');
+        };
+
+        // Xử lý ẩn vùng âm thanh nếu không có file
+        document.addEventListener("DOMContentLoaded", function () {
+            // Lấy tất cả các thẻ audio có class là check-audio
+            const audioElements = document.querySelectorAll('.check-audio');
+
+            audioElements.forEach(audio => {
+                let hasSource = false;
+
+                // Kiểm tra thuộc tính src trực tiếp của thẻ audio
+                if (audio.getAttribute('src') && audio.getAttribute('src').trim() !== '/media/audios/') {
+                    hasSource = true;
+                } else {
+                    // Hoặc kiểm tra xem có thẻ <source> con có thuộc tính src hợp lệ không
+                    const sourceTag = audio.querySelector('source');
+                    if (sourceTag && sourceTag.getAttribute('src') && sourceTag.getAttribute('src').trim() !== '/media/audios/') {
+                        hasSource = true;
+                    }
+                }
+
+                // Nếu không có file âm thanh, ẩn thẻ audio (hoặc vùng chứa nó)
+                if (!hasSource) {
+                    audio.classList.add('hidden');
+                    // Hoặc ẩn cả vùng chứa: audio.parentElement.classList.add('hidden');
+                }
+            });
+        });
+
+        // 1. Xử lý đếm ngược thời gian và tự động nộp
+        let timeLeft = {{ exam_duration }}; // Lấy số giây từ Django truyền qua
+        const timerElement = document.getElementById('timer');
+        const examForm = document.getElementById('examForm');
+
+        const countdown = setInterval(() => {
+            let minutes = Math.floor(timeLeft / 60);
+            let seconds = timeLeft % 60;
+
+            timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+            if (timeLeft <= 0) {
+                clearInterval(countdown);
+                alert("Hết giờ làm bài! Hệ thống sẽ tự động nộp bài.");
+                localStorage.clear(); // Xóa dữ liệu tạm khi nộp bài
+                examForm.submit();
+            }
+            timeLeft--;
+        }, 1000);
+
+        // 2. Lưu tạm và khôi phục đáp án bằng localStorage
+        const formInputs = examForm.querySelectorAll('input[type="radio"]');
+
+        // Khôi phục dữ liệu cũ nếu lỡ F5 hoặc tải lại trang
+        formInputs.forEach(input => {
+            const savedValue = localStorage.getItem(input.name);
+            if (savedValue && savedValue === input.value) {
+                input.checked = true;
+            }
+
+            // Lắng nghe sự kiện thay đổi để lưu tạm ngay lập tức
+            input.addEventListener('change', () => {
+                localStorage.setItem(input.name, input.value);
+            });
+        });
+
+        // Xóa localStorage khi người dùng bấm nút nộp bài thủ công
+        examForm.addEventListener('submit', () => {
+            localStorage.clear();
+        });
+    </script>
+</body>
+</html>

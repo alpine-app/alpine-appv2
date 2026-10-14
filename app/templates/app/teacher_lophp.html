@@ -1,0 +1,100 @@
+{% extends "app/teacher_dashboard.html" %}
+
+{% block content %}
+
+<h2>{{ title }}.</h2>
+<h6>Danh sách các môn học.</h6>
+
+<table border="1" cellpadding="10" cellspacing="0" style='text-align: center; vertical-align: middle;'>
+    <tr>
+        <th>Mã môn</th>
+        <th>Tên môn học</th>
+        <th>Mã ngành</th>
+        <th>Trình độ</th>
+        <th>Thời gian</th>
+    </tr>
+    {% for ro in data %}
+    <tr>
+        {% for value in ro.values %}
+        <td>{{ value }}</td>
+
+        {% endfor %}
+    </tr>
+    {% endfor %}
+</table>
+<br>
+<h4>Danh sách các lớp học phần.</h4>
+<table border="1" cellpadding="10" cellspacing="0" style='text-align: center; vertical-align: middle;'>
+    <tr>
+        <th>Mã lớp hp</th>
+        <th>Tên lớp hp</th>
+        <th>Năm học</th>
+    </tr>
+    {% for ro in datal %}
+    <tr>
+        {% for value in ro.values %}
+        <td>{{ value }}</td>
+
+        {% endfor %}
+    </tr>
+    {% endfor %}
+</table>
+<br>
+<div class="row">
+    <div class="col-md-8">
+        <section id="svForm">
+            <form action="" method="post" class="form-horizontal">
+                {% csrf_token %}
+                <hr />
+                <h4>Tạo lớp học phần.</h4>
+                <div class="form-group">
+                    <table>
+                        {{ u_form1.as_table }}
+                    </table>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <input type="hidden" name="next" value="/" />
+                        <button type="submit" name="action" value="save1" class="btn btn-default">Lưu</button>
+                    </div>
+                </div>
+            </form>
+            <form action="" method="post" class="form-horizontal">
+                {% csrf_token %}
+                <hr />
+                <h4>Chỉnh, sửa lớp học phần.</h4>
+                <div class="form-group">
+                    <table>
+                        {{ u_form3.as_table }}
+                    </table>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <input type="hidden" name="next" value="/" />
+                        <button type="submit" name="action" value="repair1" class="btn btn-default">Sửa</button>
+                    </div>
+                </div>
+            </form>
+            <form action="" method="post" enctype="multipart/form-data" class="form-horizontal">
+                {% csrf_token %}
+                <hr />
+                <h4>Nhập sinh viên vào lớp học phần.</h4>
+                <div class="form-group">
+                    <table>
+                        {{ u_form2.as_table }}
+                    </table>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <input type="hidden" name="next" value="/" />
+                        <button type="submit" name="action" value="save2" class="btn btn-default">Lưu</button>
+                        <button type="submit" name="action" value="repair2" class="btn btn-default">Sửa</button>
+                    </div>
+                </div>
+            </form>
+        </section>
+    </div>
+
+</div>
+
+{% endblock %}

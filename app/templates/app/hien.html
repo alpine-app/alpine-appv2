@@ -1,0 +1,101 @@
+{% extends "app/layout.html" %}
+
+{% block content %}
+
+<div class="main-layout">
+    <!-- Bảng dữ liệu bên trái -->
+    <div class="top-section">
+        <div class="left-panel">
+            <h3>Danh sách dữ liệu</h3>
+            <table id="data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Tên</th>
+                        <th>Email</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Dữ liệu được render từ Django Template hoặc JS -->
+                    {% for item in items %}
+                    <tr data-id="{{ item.tt }}" data-name="{{ item.mch }}" data-email="{{ item.nd }}">
+                        <td>{{ item.tt }}</td>
+                        <td>{{ item.mch }}</td>
+                        <td>{{ item.nd }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Form nhập liệu chi tiết bên phải -->
+        <div class="right-panel">
+            <h3>Chi tiết / Nhập liệu</h3>
+            <form id="detail-form" method="POST" action="">
+                {% csrf_token %}
+                <input type="hidden" id="item-id" name="item_id">
+
+                <label for="item-mch">Mã câu hỏi:</label>
+                <input type="text" id="item-mch" name="name" required>
+
+                <label for="item-nd">Email:</label>
+                <input type="text" id="item-nd" name="email" required>
+            </form>
+        </div>
+    </div>
+    <div class="bottom-section">
+        <!-- Hàng dưới: Các nút lệnh và label -->
+        <div class="action-buttons">
+            <button type="submit" form="detail-form" class="btn btn-primary">Lưu</button>
+            <button type="button" id="btn-new" class="btn btn-success">Thêm mới</button>
+            <button type="button" id="btn-delete" class="btn btn-danger">Xóa</button>
+            <button type="button" class="btn btn-secondary">Hủy</button>
+        </div>
+        <div class="labels-info">
+            <span id="status-label">Trạng thái: Sẵn sàng</span>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const rows = document.querySelectorAll('#data-table tbody tr');
+        const idInput = document.getElementById('item-id');
+        const nameInput = document.getElementById('item-mch');
+        const emailInput = document.getElementById('item-nd');
+        const statusLabel = document.getElementById('status-label');
+
+        rows.forEach(row => {
+            row.addEventListener('click', function () {
+                // Xóa highlight dòng cũ, thêm highlight dòng mới
+                rows.forEach(r => r.classList.remove('selected'));
+                this.classList.add('selected');
+
+                // Lấy dữ liệu từ thuộc tính data-* của thẻ tr
+                const tt = this.getAttribute('data-id');
+                const name = this.getAttribute('data-name');
+                const email = this.getAttribute('data-email');
+
+                // Đưa dữ liệu vào form
+                idInput.value = tt;
+                nameInput.value = name;
+                emailInput.value = email;
+
+                statusLabel.textContent = `Đang chọn bản ghi ID: ${tt}`;
+            });
+        });
+
+        // Nút Tạo mới: reset form
+        document.getElementById('btn-new').addEventListener('click', function () {
+            idInput.value = '';
+            nameInput.value = '';
+            emailInput.value = '';
+            statusLabel.textContent = 'Trạng thái: Tạo mới bản ghi';
+            rows.forEach(r => r.classList.remove('selected'));
+        });
+    });
+</script>
+{% endblock %}
