@@ -1,2 +1,2 @@
 release: python manage.py migrate --no-input
-web: gunicorn your_project_name.wsgi --bind 0.0.0.0:$PORT --log-file -
+web: gunicorn AlpineWeb8v3.wsgi --bind 0.0.0.0:$PORT --log-file -
