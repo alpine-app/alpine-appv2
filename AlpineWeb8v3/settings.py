@@ -27,7 +27,7 @@ SECRET_KEY = '22261e31-17cc-4c39-b63c-8710570ceb56'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = [[".railway.app", "alpine_app-sonhyz", "www.alpanfa.com"]
+ALLOWED_HOSTS = [".railway.app", "alpine_app-sonhyz", "www.alpanfa.com"]
 
 # Application references
 # https://docs.djangoproject.com/en/2.1/ref/settings/#std:setting-INSTALLED_APPS
